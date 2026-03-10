@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TBH Platform — Telegram Bot Hosting | VisionCoreGroup</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero{padding:88px 0 70px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--accent2);font-size:.77rem;font-weight:700;padding:6px 14px;border-radius:99px;margin-bottom:26px;letter-spacing:.4px;}
+.hero-badge em{background:var(--accent2);color:#000;font-style:normal;font-size:.68rem;padding:2px 8px;border-radius:99px;}
+.hero h1{font-size:clamp(2.8rem,5.5vw,4.6rem);font-weight:800;letter-spacing:-3px;line-height:1.08;margin-bottom:20px;}
+.hero h1 .g{background:linear-gradient(130deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{color:var(--muted);font-size:1.05rem;line-height:1.75;max-width:510px;margin-bottom:34px;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:52px;}
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.hstat{border-left:2px solid var(--accent);padding-left:16px;}
+.hstat-n{font-size:1.7rem;font-weight:800;font-family:var(--mono);}
+.hstat-n .c{color:var(--accent2);}
+.hstat-l{color:var(--muted);font-size:.76rem;margin-top:2px;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:48px;}
+.feat-icon{width:44px;height:44px;background:rgba(79,110,247,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:14px;}
+.feat-card h3{font-size:.95rem;font-weight:700;margin-bottom:7px;}
+.feat-card p{color:var(--muted);font-size:.83rem;line-height:1.65;}
+.ref-banner{background:linear-gradient(135deg,rgba(79,110,247,.1),rgba(0,229,160,.06));border:1px solid rgba(79,110,247,.22);border-radius:20px;padding:44px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;}
+.ref-text h2{font-size:1.75rem;font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+.ref-text p{color:var(--muted);font-size:.91rem;line-height:1.65;}
+.ref-steps{display:flex;flex-direction:column;gap:10px;min-width:240px;}
+.ref-step{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;}
+.ref-num{background:var(--accent);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.73rem;font-weight:700;flex-shrink:0;}
+.ref-step p{font-size:.81rem;color:var(--muted);}
+.tg-banner{background:linear-gradient(135deg,rgba(0,136,204,.1),rgba(0,229,160,.05));border:1px solid rgba(0,136,204,.22);border-radius:20px;padding:44px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;}
+.tg-icon{font-size:4rem;line-height:1;}
+.tg-text h2{font-size:1.75rem;font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+.tg-text p{color:var(--muted);font-size:.91rem;line-height:1.65;margin-bottom:20px;}
+.faq-list{display:flex;flex-direction:column;gap:9px;margin-top:40px;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s;}
+.faq-item.open{border-color:rgba(79,110,247,.38);}
+.faq-q{width:100%;background:none;border:none;color:var(--text);font-family:var(--font);font-size:.88rem;font-weight:600;padding:16px 20px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;}
+.faq-arr{color:var(--muted);transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-arr{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.faq-item.open .faq-a{max-height:200px;}
+.faq-a p{padding:0 20px 16px;color:var(--muted);font-size:.84rem;line-height:1.7;}
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:40px;}
+.sup-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;text-align:center;transition:all .25s;}
+.sup-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+.sup-icon{font-size:2.2rem;margin-bottom:12px;}
+.sup-card h3{font-size:.95rem;font-weight:700;margin-bottom:7px;}
+.sup-card p{color:var(--muted);font-size:.83rem;margin-bottom:14px;line-height:1.6;}
+.sup-link{display:inline-flex;align-items:center;gap:5px;color:var(--accent);text-decoration:none;font-size:.83rem;font-weight:600;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.22);padding:8px 16px;border-radius:8px;transition:all .2s;cursor:pointer;}
+.sup-link:hover{background:rgba(79,110,247,.2);}
+.vcg-footer{background:rgba(79,110,247,.06);border:1px solid rgba(79,110,247,.15);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px;}
+.vcg-badge{font-size:.78rem;color:var(--muted);}
+.vcg-badge strong{color:var(--accent2);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div><span class="accent">TBH</span>&nbsp;Platform</a>
+  <div class="nav-links">
+    <a href="index.html" class="active" id="ni_home">Bosh sahifa</a>
+    <a href="pricing.html" id="ni_pricing">Tariflar</a>
+    <a href="dashboard.html" id="ni_dashboard">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="sw" id="langSw">
+      <button onclick="setLang('uz',this)">UZ</button>
+      <button onclick="setLang('ru',this)">RU</button>
+      <button onclick="setLang('en',this)">EN</button>
+    </div>
+    <div class="sw" id="currSw" style="margin-left:6px;">
+      <button onclick="setCurr('uzs',this)">UZS</button>
+      <button onclick="setCurr('usd',this)">USD</button>
+      <button onclick="setCurr('rub',this)">RUB</button>
+    </div>
+    <button class="btn-nav-login" onclick="openModal('login')" id="ni_login">Kirish</button>
+    <button class="btn-nav-reg" onclick="openModal('reg')" id="ni_reg">Ro'yxat</button>
+  </div>
+</nav>
+<div class="page">
+<!-- HERO -->
+<section class="hero"><div class="container"><div class="fade">
+  <div class="hero-badge"><em id="h_new">YANGI</em>&nbsp;<span id="h_tag">Telegram Bot Hosting Platformasi</span></div>
+  <h1 id="h_title">Telegram Botingiz<br>Uchun Eng <span class="g">Ishonchli</span><br>Hosting</h1>
+  <p id="h_desc">Botingizni sekundlarda ishga tushiring. Python, Node.js, Go va boshqa tillarni qo'llab-quvvatlash. 24/7 monitoring va professional texnik yordam.</p>
+  <div class="hero-btns">
+    <button class="btn btn-primary" onclick="openModal('reg')" id="h_cta1">Bepul Boshlash →</button>
+    <a href="pricing.html"><button class="btn btn-outline" id="h_cta2">Tariflarni Ko'rish</button></a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">—<span class="c"></span></div><div class="hstat-l" id="hs_bots">Faol Botlar</div></div>
+    <div class="hstat"><div class="hstat-n">99.<span class="c">9%</span></div><div class="hstat-l" id="hs_up">Uptime</div></div>
+    <div class="hstat"><div class="hstat-n">3<span class="c">ms</span></div><div class="hstat-l" id="hs_ping">O'rtacha Ping</div></div>
+    <div class="hstat"><div class="hstat-n">24<span class="c">/7</span></div><div class="hstat-l" id="hs_sup">Qo'llab-quvvatlash</div></div>
+  </div>
+</div></div></section>
+<!-- FEATURES -->
+<section class="sec"><div class="container">
+  <div class="fade"><div class="sec-tag">⚡ <span id="ft_tag">Imkoniyatlar</span></div><h2 class="sec-title" id="ft_title">Nima Uchun TBH Platform?</h2><p class="sec-sub" id="ft_sub">Telegram botlar uchun maxsus yaratilgan hosting infratuzilmasi</p></div>
+  <div class="feat-grid fade">
+    <div class="card feat-card"><div class="feat-icon">⚡</div><h3 id="f1t">Yuqori Tezlik</h3><p id="f1d">NVMe SSD va global CDN orqali botingiz har qanday yuklamada tez ishlaydi.</p></div>
+    <div class="card feat-card"><div class="feat-icon">🔄</div><h3 id="f2t">Auto Restart</h3><p id="f2d">Bot to'xtab qolsa avtomatik qayta ishga tushadi. Hech qanday qo'l aralashuvi shart emas.</p></div>
+    <div class="card feat-card"><div class="feat-icon">📊</div><h3 id="f3t">Real-time Monitoring</h3><p id="f3d">CPU, RAM, disk va tarmoq statistikasini real vaqtda kuzating.</p></div>
+    <div class="card feat-card"><div class="feat-icon">🔒</div><h3 id="f4t">DDoS Himoyasi</h3><p id="f4d">Professional DDoS himoyasi bilan botingiz har doim ishga tayyor turadi.</p></div>
+    <div class="card feat-card"><div class="feat-icon">💾</div><h3 id="f5t">Avtomatik Backup</h3><p id="f5d">Ma'lumotlaringiz muntazam saqlanadi. Bir bosishda tiklash imkoniyati mavjud.</p></div>
+    <div class="card feat-card"><div class="feat-icon">🌍</div><h3 id="f6t">Ko'p Mintaqa</h3><p id="f6d">Frankfurt, Moscow, Singapore serverlaridan birini tanlang.</p></div>
+  </div>
+</div></section>
+<!-- REFERRAL -->
+<section class="sec" style="padding-top:0;"><div class="container">
+  <div class="ref-banner fade">
+    <div class="ref-text">
+      <h2 id="ref_title">Do'stingizni Taklif Qiling!</h2>
+      <p id="ref_desc">Har bir muvaffaqiyatli taklif uchun 1 oy bepul hosting yoki 20% chegirma oling.</p>
+      <button class="btn btn-primary" style="margin-top:20px;" onclick="openModal('reg')" id="ref_btn">Referral Havolani Olish</button>
+    </div>
+    <div class="ref-steps">
+      <div class="ref-step"><div class="ref-num">1</div><p id="ref_s1">Ro'yxatdan o'ting va referral havolangizni oling</p></div>
+      <div class="ref-step"><div class="ref-num">2</div><p id="ref_s2">Havolani do'stlaringizga yuboring</p></div>
+      <div class="ref-step"><div class="ref-num">3</div><p id="ref_s3">Ro'yxatdan o'tishi bilanoq ikkovingiz mukofot olasiz</p></div>
+    </div>
+  </div>
+</div></section>
+<!-- TELEGRAM -->
+<section class="sec" style="padding-top:0;"><div class="container">
+  <div class="tg-banner fade">
+    <div class="tg-icon">✈️</div>
+    <div class="tg-text">
+      <h2 id="tg_title">Telegramda Ham Boshqaring!</h2>
+      <p id="tg_desc">TBH Platform Mini App — Telegram ichidan to'g'ridan-to'g'ri botingizni boshqaring. Ilovani yuklab olish shart emas!</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="https://t.me/TBHPlatformBot" target="_blank"><button class="btn btn-tg" id="tg_btn">@TBHPlatformBot ni Ochish</button></a>
+        <a href="https://t.me/TBHPlatformBot/app" target="_blank"><button class="btn btn-outline" id="tg_btn2">Mini App ni Ochish</button></a>
+      </div>
+    </div>
+  </div>
+</div></section>
+<!-- FAQ -->
+<section class="sec" style="padding-top:0;" id="faq"><div class="container">
+  <div class="fade"><div class="sec-tag">❓ FAQ</div><h2 class="sec-title" id="faq_title">Ko'p So'raladigan Savollar</h2></div>
+  <div class="faq-list fade" id="faqList"></div>
+</div></section>
+<!-- SUPPORT -->
+<section class="sec" style="padding-top:0;"><div class="container">
+  <div class="fade"><div class="sec-tag">💬 <span id="sup_tag">Aloqa</span></div><h2 class="sec-title" id="sup_title">Qo'llab-quvvatlash Markazi</h2><p class="sec-sub" id="sup_sub">Savolingiz bormi? Biz doim tayyormiz.</p></div>
+  <div class="sup-grid fade">
+    <div class="sup-card"><div class="sup-icon">✉️</div><h3 id="se_t">Elektron Pochta</h3><p id="se_d">Texnik muammolar uchun. 24 soat ichida javob.</p><a href="mailto:support@tbhplatform.uz" class="sup-link">support@tbhplatform.uz →</a></div>
+    <div class="sup-card"><div class="sup-icon">✈️</div><h3 id="st_t">Telegram</h3><p id="st_d">Tezkor yordam uchun Telegram kanalimizga qo'shiling.</p><a href="https://t.me/TBHSupport" target="_blank" class="sup-link">@TBHSupport →</a></div>
+    <div class="sup-card"><div class="sup-icon">📚</div><h3 id="sd_t">Hujjatlar</h3><p id="sd_d">Bot joylash bo'yicha qo'llanmalar va video darsliklar.</p><a href="https://docs.tbhplatform.uz" target="_blank" class="sup-link" id="sd_l">Hujjatlarni O'qish →</a></div>
+  </div>
+</div></section>
+</div>
+<footer>
+  <div>
+    <div class="footer-logo"><span class="accent">TBH</span> Platform</div>
+    <div class="vcg-footer"><span class="vcg-badge">🚀 <strong>VisionCoreGroup</strong> jamoasi tomonidan yaratilgan</span></div>
+  </div>
+  <p id="f_r">© 2025 TBH Platform. Barcha huquqlar himoyalangan.</p>
+  <div class="footer-links"><a href="#" id="f_p">Maxfiylik</a><a href="#" id="f_t">Shartlar</a><a href="#faq">Aloqa</a><a href="admin.html">Admin</a></div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal-bg" id="loginModal" onclick="if(event.target===this)closeModal('login')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <div class="modal-title" id="ml_t">Kirish</div>
+    <div class="modal-sub" id="ml_s">Hisobingizga kiring</div>
+    <div class="form-group"><label class="label" id="ml_e">Email</label><input class="input" id="loginEmail" type="email" placeholder="email@example.com"></div>
+    <div class="form-group"><label class="label" id="ml_p">Parol</label><input class="input" id="loginPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div id="loginErr" style="color:var(--danger);font-size:.8rem;margin-bottom:8px;display:none;"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doLogin()" id="ml_b">Kirish</button>
+    <div class="modal-switch"><span id="ml_sw">Hisobingiz yo'qmi? </span><a onclick="switchModal('login','reg')" id="ml_swa" style="color:var(--accent);cursor:pointer;font-weight:600;">Ro'yxatdan o'ting</a></div>
+  </div>
+</div>
+<!-- REG MODAL -->
+<div class="modal-bg" id="regModal" onclick="if(event.target===this)closeModal('reg')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('reg')">✕</button>
+    <div class="modal-title" id="mr_t">Ro'yxatdan O'tish</div>
+    <div class="modal-sub" id="mr_s">Bepul hisob yarating. Kredit karta shart emas.</div>
+    <div class="form-group"><label class="label" id="mr_u">Foydalanuvchi nomi</label><input class="input" id="regUser" type="text" placeholder="username"></div>
+    <div class="form-group"><label class="label" id="mr_e">Email</label><input class="input" id="regEmail" type="email" placeholder="email@example.com"></div>
+    <div class="form-group"><label class="label" id="mr_p">Parol</label><input class="input" id="regPass" type="password" placeholder="Min 6 ta belgi"></div>
+    <div id="regErr" style="color:var(--danger);font-size:.8rem;margin-bottom:8px;display:none;"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doRegister()" id="mr_b">Bepul Ro'yxatdan O'tish</button>
+    <div class="modal-switch"><span id="mr_sw">Hisobingiz bormi? </span><a onclick="switchModal('reg','login')" id="mr_swa" style="color:var(--accent);cursor:pointer;font-weight:600;">Kiring</a></div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+const TX={
+  uz:{ni_home:"Bosh sahifa",ni_pricing:"Tariflar",ni_dashboard:"Dashboard",ni_login:"Kirish",ni_reg:"Ro'yxat",h_new:"YANGI",h_tag:"Telegram Bot Hosting Platformasi",h_title:"Telegram Botingiz<br>Uchun Eng <span class='g'>Ishonchli</span><br>Hosting",h_desc:"Botingizni sekundlarda ishga tushiring. Python, Node.js, Go va boshqa tillarni qo'llab-quvvatlash.",h_cta1:"Bepul Boshlash →",h_cta2:"Tariflarni Ko'rish",hs_bots:"Faol Botlar",hs_up:"Uptime",hs_ping:"O'rtacha Ping",hs_sup:"Qo'llab-quvvatlash",ft_tag:"Imkoniyatlar",ft_title:"Nima Uchun TBH Platform?",ft_sub:"Telegram botlar uchun maxsus yaratilgan hosting infratuzilmasi",f1t:"Yuqori Tezlik",f1d:"NVMe SSD va global CDN orqali botingiz har qanday yuklamada tez ishlaydi.",f2t:"Auto Restart",f2d:"Bot to'xtab qolsa avtomatik qayta ishga tushadi.",f3t:"Real-time Monitoring",f3d:"CPU, RAM, disk va tarmoq statistikasini real vaqtda kuzating.",f4t:"DDoS Himoyasi",f4d:"Professional DDoS himoyasi bilan botingiz har doim ishga tayyor.",f5t:"Avtomatik Backup",f5d:"Ma'lumotlaringiz muntazam saqlanadi. Bir bosishda tiklash.",f6t:"Ko'p Mintaqa",f6d:"Frankfurt, Moscow, Singapore serverlaridan birini tanlang.",ref_title:"Do'stingizni Taklif Qiling!",ref_desc:"Har bir muvaffaqiyatli taklif uchun 1 oy bepul hosting yoki 20% chegirma oling.",ref_btn:"Referral Havolani Olish",ref_s1:"Ro'yxatdan o'ting va referral havolangizni oling",ref_s2:"Havolani do'stlaringizga yuboring",ref_s3:"Ro'yxatdan o'tishi bilanoq ikkovingiz mukofot olasiz",tg_title:"Telegramda Ham Boshqaring!",tg_desc:"TBH Platform Mini App — Telegram ichidan to'g'ridan-to'g'ri botingizni boshqaring.",tg_btn:"@TBHPlatformBot ni Ochish",tg_btn2:"Mini App ni Ochish",faq_title:"Ko'p So'raladigan Savollar",sup_tag:"Aloqa",sup_title:"Qo'llab-quvvatlash Markazi",sup_sub:"Savolingiz bormi? Biz doim tayyormiz.",se_t:"Elektron Pochta",se_d:"Texnik muammolar uchun. 24 soat ichida javob.",st_t:"Telegram",st_d:"Tezkor yordam uchun Telegram kanalimizga qo'shiling.",sd_t:"Hujjatlar",sd_d:"Bot joylash bo'yicha qo'llanmalar.",sd_l:"Hujjatlarni O'qish →",f_r:"© 2025 TBH Platform. Barcha huquqlar himoyalangan.",f_p:"Maxfiylik",f_t:"Shartlar",ml_t:"Kirish",ml_s:"Hisobingizga kiring",ml_e:"Email",ml_p:"Parol",ml_b:"Kirish",ml_sw:"Hisobingiz yo'qmi? ",ml_swa:"Ro'yxatdan o'ting",mr_t:"Ro'yxatdan O'tish",mr_s:"Bepul hisob yarating. Kredit karta shart emas.",mr_u:"Foydalanuvchi nomi",mr_e:"Email",mr_p:"Parol",mr_b:"Bepul Ro'yxatdan O'tish",mr_sw:"Hisobingiz bormi? ",mr_swa:"Kiring"},
+  ru:{ni_home:"Главная",ni_pricing:"Тарифы",ni_dashboard:"Дашборд",ni_login:"Войти",ni_reg:"Регистрация",h_new:"НОВЫЙ",h_tag:"Платформа хостинга Telegram ботов",h_title:"Надёжный <span class='g'>Хостинг</span><br>Для Вашего<br>Telegram Бота",h_desc:"Запустите бота за секунды. Python, Node.js, Go и другие языки.",h_cta1:"Начать Бесплатно →",h_cta2:"Посмотреть Тарифы",hs_bots:"Активных Ботов",hs_up:"Аптайм",hs_ping:"Средний Пинг",hs_sup:"Поддержка",ft_tag:"Возможности",ft_title:"Почему TBH Platform?",ft_sub:"Инфраструктура для Telegram ботов от VisionCoreGroup",f1t:"Высокая Скорость",f1d:"NVMe SSD и CDN — бот работает быстро.",f2t:"Авто Рестарт",f2d:"Бот упал? Автоматически перезапускается.",f3t:"Мониторинг в реальном времени",f3d:"Следите за CPU, RAM и сетью.",f4t:"Защита от DDoS",f4d:"Профессиональная защита.",f5t:"Автобэкап",f5d:"Данные сохраняются регулярно.",f6t:"Несколько регионов",f6d:"Франкфурт, Москва или Сингапур.",ref_title:"Приглашайте Друзей — Выигрывают Оба!",ref_desc:"За каждое успешное приглашение — 1 месяц бесплатно или скидка 20%.",ref_btn:"Получить реферальную ссылку",ref_s1:"Зарегистрируйтесь и получите свою ссылку",ref_s2:"Отправьте ссылку друзьям",ref_s3:"После регистрации оба получают награду",tg_title:"Управляйте прямо в Telegram!",tg_desc:"TBH Platform Mini App — управляйте ботом прямо из Telegram.",tg_btn:"Открыть @TBHPlatformBot",tg_btn2:"Открыть Mini App",faq_title:"Часто Задаваемые Вопросы",sup_tag:"Контакты",sup_title:"Центр Поддержки",sup_sub:"Есть вопросы? Мы всегда готовы.",se_t:"Электронная Почта",se_d:"Ответ в течение 24 часов.",st_t:"Telegram",st_d:"Быстрая помощь через Telegram.",sd_t:"Документация",sd_d:"Руководства по размещению ботов.",sd_l:"Читать документацию →",f_r:"© 2025 TBH Platform. Все права защищены.",f_p:"Конфиденциальность",f_t:"Условия",ml_t:"Войти",ml_s:"Войдите в аккаунт",ml_e:"Email",ml_p:"Пароль",ml_b:"Войти",ml_sw:"Нет аккаунта? ",ml_swa:"Зарегистрироваться",mr_t:"Регистрация",mr_s:"Создайте бесплатный аккаунт.",mr_u:"Имя пользователя",mr_e:"Email",mr_p:"Пароль",mr_b:"Зарегистрироваться",mr_sw:"Уже есть аккаунт? ",mr_swa:"Войти"},
+  en:{ni_home:"Home",ni_pricing:"Pricing",ni_dashboard:"Dashboard",ni_login:"Login",ni_reg:"Register",h_new:"NEW",h_tag:"Telegram Bot Hosting Platform",h_title:"The Most <span class='g'>Reliable</span><br>Hosting For Your<br>Telegram Bot",h_desc:"Launch your bot in seconds. Python, Node.js, Go and more.",h_cta1:"Start For Free →",h_cta2:"View Plans",hs_bots:"Active Bots",hs_up:"Uptime",hs_ping:"Avg Ping",hs_sup:"Support",ft_tag:"Features",ft_title:"Why TBH Platform?",ft_sub:"Hosting built for Telegram bots by VisionCoreGroup",f1t:"High Speed",f1d:"NVMe SSD and CDN — fast under any load.",f2t:"Auto Restart",f2d:"Bot crashes? Auto-restarts instantly.",f3t:"Real-time Monitoring",f3d:"Track CPU, RAM, and network in real time.",f4t:"DDoS Protection",f4d:"Professional DDoS protection.",f5t:"Auto Backup",f5d:"Data saved regularly. One-click restore.",f6t:"Multi-Region",f6d:"Frankfurt, Moscow, or Singapore.",ref_title:"Refer Friends — Both Win!",ref_desc:"Earn 1 month free or 20% discount per referral.",ref_btn:"Get Referral Link",ref_s1:"Register and get your referral link",ref_s2:"Send the link to friends",ref_s3:"Both get rewards once they sign up",tg_title:"Manage Inside Telegram!",tg_desc:"TBH Platform Mini App — manage your bot directly from Telegram.",tg_btn:"Open @TBHPlatformBot",tg_btn2:"Open Mini App",faq_title:"Frequently Asked Questions",sup_tag:"Support",sup_title:"Support Center",sup_sub:"Got questions? We're always ready.",se_t:"Email Support",se_d:"Response within 24 hours.",st_t:"Telegram",st_d:"Fast help via Telegram.",sd_t:"Documentation",sd_d:"Guides and tutorials.",sd_l:"Read the Docs →",f_r:"© 2025 TBH Platform. All rights reserved.",f_p:"Privacy",f_t:"Terms",ml_t:"Login",ml_s:"Sign in to your account",ml_e:"Email",ml_p:"Password",ml_b:"Login",ml_sw:"No account? ",ml_swa:"Register",mr_t:"Register",mr_s:"Create a free account.",mr_u:"Username",mr_e:"Email",mr_p:"Password",mr_b:"Register For Free",mr_sw:"Already have an account? ",mr_swa:"Login"},
+};
+
+function applyLang(){
+  const d=TX[TBH.lang];
+  Object.keys(d).forEach(k=>{const el=document.getElementById(k);if(el)el.innerHTML=d[k];});
+  ['uz','ru','en'].forEach((l,i)=>document.querySelectorAll('#langSw button')[i].classList.toggle('on',TBH.lang===l));
+  ['uzs','usd','rub'].forEach((c,i)=>document.querySelectorAll('#currSw button')[i].classList.toggle('on',TBH.curr===c));
+  renderFaq();
+}
+function setLang(l){saveLang(l);applyLang();}
+function setCurr(c){saveCurr(c);['uzs','usd','rub'].forEach((x,i)=>document.querySelectorAll('#currSw button')[i].classList.toggle('on',x===c));}
+
+// ---- AUTH (localStorage demo) ----
+function getUsers(){ try{return JSON.parse(localStorage.getItem('tbh_users')||'[]');}catch(e){return[];} }
+function saveUsers(u){ localStorage.setItem('tbh_users',JSON.stringify(u)); }
+function setSession(u){ localStorage.setItem('tbh_session',JSON.stringify(u)); }
+function getSession(){ try{return JSON.parse(localStorage.getItem('tbh_session'));}catch(e){return null;} }
+
+function doRegister(){
+  const un=document.getElementById('regUser').value.trim();
+  const em=document.getElementById('regEmail').value.trim();
+  const pw=document.getElementById('regPass').value;
+  const err=document.getElementById('regErr');
+  const msgs={uz:{empty:"Barcha maydonlarni to'ldiring",short:"Parol kamida 6 ta belgi bo'lishi kerak",exists:"Bu foydalanuvchi nomi yoki email allaqachon mavjud",ok:"✓ Ro'yxatdan o'tdingiz! Xush kelibsiz!"},ru:{empty:"Заполните все поля",short:"Пароль минимум 6 символов",exists:"Это имя пользователя или email уже занято",ok:"✓ Вы зарегистрированы! Добро пожаловать!"},en:{empty:"Fill in all fields",short:"Password must be at least 6 characters",exists:"Username or email already taken",ok:"✓ Registered! Welcome!"}};
+  const m=msgs[TBH.lang];
+  err.style.display='none';
+  if(!un||!em||!pw){err.textContent=m.empty;err.style.display='block';return;}
+  if(pw.length<6){err.textContent=m.short;err.style.display='block';return;}
+  const users=getUsers();
+  if(users.find(u=>u.username===un||u.email===em)){err.textContent=m.exists;err.style.display='block';return;}
+  const newUser={username:un,email:em,password:pw,plan:'Free',joined:new Date().toLocaleDateString(),balance:0,bots:[],ref:'tbh_'+un};
+  users.push(newUser);
+  saveUsers(users);
+  setSession(newUser);
+  closeModal('reg');
+  toast(m.ok,'success');
+  setTimeout(()=>window.location.href='dashboard.html',1200);
+}
+
+function doLogin(){
+  const em=document.getElementById('loginEmail').value.trim();
+  const pw=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  const msgs={uz:{empty:"Email va parolni kiriting",wrong:"Email yoki parol noto'g'ri",ok:"✓ Xush kelibsiz!"},ru:{empty:"Введите email и пароль",wrong:"Неверный email или пароль",ok:"✓ Добро пожаловать!"},en:{empty:"Enter email and password",wrong:"Wrong email or password",ok:"✓ Welcome back!"}};
+  const m=msgs[TBH.lang];
+  err.style.display='none';
+  if(!em||!pw){err.textContent=m.empty;err.style.display='block';return;}
+  const users=getUsers();
+  const user=users.find(u=>(u.email===em||u.username===em)&&u.password===pw);
+  if(!user){err.textContent=m.wrong;err.style.display='block';return;}
+  setSession(user);
+  closeModal('login');
+  toast(m.ok,'success');
+  setTimeout(()=>window.location.href='dashboard.html',1200);
+}
+
+function renderFaq(){
+  document.getElementById('faqList').innerHTML=faqs[TBH.lang].map((item,i)=>`<div class="faq-item" id="fi${i}"><button class="faq-q" onclick="toggleFaq(${i})">${item.q}<span class="faq-arr">▾</span></button><div class="faq-a"><p>${item.a}</p></div></div>`).join('');
+}
+function toggleFaq(i){document.getElementById('fi'+i).classList.toggle('open');}
+document.querySelectorAll('.fade').forEach(el=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08}).observe(el));
+
+// Check if already logged in
+if(getSession()){
+  document.getElementById('ni_login').textContent='Dashboard';
+  document.getElementById('ni_login').onclick=()=>window.location.href='dashboard.html';
+  document.getElementById('ni_reg').textContent={uz:'Chiqish',ru:'Выйти',en:'Logout'}[TBH.lang]||'Logout';
+  document.getElementById('ni_reg').onclick=()=>{localStorage.removeItem('tbh_session');location.reload();};
+}
+applyLang();
+</script>
+</body>
+</html>
