@@ -4,7 +4,7 @@
 // ============================================================
 
 // ── API URL — faqat shu yerda o'zgartiring ─────────────────
-const API_URL = "https://your-username.pythonanywhere.com";
+const API_URL = "https://shunchaki.pythonanywhere.com";
 // Misol: "https://visioncoregroup.pythonanywhere.com"
 // ───────────────────────────────────────────────────────────
 
