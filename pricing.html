@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tariflar — TBH Platform</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.pricing-hero{padding:60px 0 30px;text-align:center;}
+.pricing-hero h1{font-size:clamp(2rem,4vw,3.2rem);font-weight:800;letter-spacing:-2px;margin-bottom:10px;}
+.pricing-hero p{color:var(--muted);font-size:1rem;max-width:480px;margin:0 auto;}
+.controls{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:28px 0;}
+.period-sw{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.period-sw button{background:none;border:none;color:var(--muted);font-family:var(--font);font-size:.85rem;font-weight:600;padding:11px 22px;cursor:pointer;transition:all .2s;position:relative;}
+.period-sw button.on{background:var(--accent);color:#fff;}
+.save-tag{position:absolute;top:-9px;right:-3px;background:var(--accent2);color:#000;font-size:.58rem;font-weight:700;padding:2px 5px;border-radius:99px;}
+.curr-sw{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.curr-sw button{background:none;border:none;color:var(--muted);font-family:var(--font);font-size:.82rem;font-weight:600;padding:11px 16px;cursor:pointer;transition:all .2s;}
+.curr-sw button.on{background:var(--surface2);color:var(--text);}
+.plans-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:14px;margin-bottom:80px;}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;transition:all .25s;}
+.plan:hover{transform:translateY(-3px);border-color:rgba(79,110,247,.4);}
+.plan.pop{border-color:var(--accent);box-shadow:0 0 28px rgba(79,110,247,.14);}
+.plan.ent{border-color:var(--accent3);background:linear-gradient(135deg,rgba(247,201,72,.04),var(--surface));}
+.plan-bdg{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:.67rem;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap;}
+.plan-bdg.hot{background:var(--accent);color:#fff;}
+.plan-bdg.new{background:var(--accent2);color:#000;}
+.plan-bdg.top{background:var(--accent3);color:#000;}
+.plan-name{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.plan-price{font-size:1.8rem;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:3px;}
+.plan-price .sym{font-size:.95rem;vertical-align:top;margin-top:5px;display:inline-block;}
+.plan-price .per{font-size:.76rem;font-weight:400;color:var(--muted);}
+.plan-desc{color:var(--muted);font-size:.76rem;margin-bottom:14px;line-height:1.5;}
+.plan-specs{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+.plan-specs li{font-size:.76rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.ok{color:var(--accent2);font-size:.68rem;}
+.no{color:var(--danger);font-size:.68rem;}
+.plan-btn{width:100%;padding:9px;border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;}
+.plan-btn.outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+.plan-btn.outline:hover{border-color:var(--accent);color:var(--accent);}
+.plan-btn.filled{background:var(--accent);color:#fff;}
+.plan-btn.gold{background:var(--accent3);color:#000;}
+.tech-wrap{overflow-x:auto;margin-bottom:80px;}
+.tbl th:first-child{min-width:160px;}
+.tbl td.tech-name{font-family:var(--mono);font-size:.78rem;font-weight:600;color:var(--text);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div><span class="accent">TBH</span>&nbsp;Platform</a>
+  <div class="nav-links">
+    <a href="index.html" id="ni_home">Bosh sahifa</a>
+    <a href="pricing.html" class="active" id="ni_pricing">Tariflar</a>
+    <a href="dashboard.html" id="ni_dashboard">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="sw" id="langSw">
+      <button onclick="setLang('uz',this)">UZ</button>
+      <button onclick="setLang('ru',this)">RU</button>
+      <button onclick="setLang('en',this)">EN</button>
+    </div>
+    <div class="sw" id="currSw" style="margin-left:6px;">
+      <button onclick="setCurrNav('uzs',this)">UZS</button>
+      <button onclick="setCurrNav('usd',this)">USD</button>
+      <button onclick="setCurrNav('rub',this)">RUB</button>
+    </div>
+    <button class="btn-nav-login" id="ni_login" onclick="window.location='index.html'">Kirish</button>
+    <button class="btn-nav-reg" id="ni_reg" onclick="window.location='index.html'">Ro'yxat</button>
+  </div>
+</nav>
+<div class="page">
+<section class="pricing-hero"><div class="container"><div class="fade">
+  <div class="sec-tag">💎 <span id="pt">Tariflar</span></div>
+  <h1 id="ph">Har Qanday Loyiha Uchun</h1>
+  <p id="ps">Bepuldan tortib enterprise darajagacha. Istalgan vaqt o'tkazish mumkin.</p>
+</div></div></section>
+<div class="container">
+  <div class="controls fade">
+    <div class="period-sw" id="periodSw">
+      <button onclick="setPeriod('daily',this)" id="p_d">Kunlik</button>
+      <button class="on" onclick="setPeriod('monthly',this)" id="p_m">Oylik</button>
+      <button onclick="setPeriod('yearly',this)" id="p_y">Yillik <span class="save-tag">-20%</span></button>
+    </div>
+    <div class="curr-sw" id="currSwB">
+      <button class="on" onclick="setCurrB('uzs',this)">🇺🇿 UZS</button>
+      <button onclick="setCurrB('usd',this)">🇺🇸 USD</button>
+      <button onclick="setCurrB('rub',this)">🇷🇺 RUB</button>
+    </div>
+  </div>
+  <div class="plans-wrap fade" id="plansGrid"></div>
+  <div class="fade">
+    <div class="sec-tag" style="margin-bottom:16px;">🛠 <span id="tt_tag">Texnologiyalar</span></div>
+    <h2 class="sec-title" id="tt_title">Qaysi Tarif Nima Qo'llab-quvvatlaydi?</h2>
+    <p class="sec-sub" id="tt_sub" style="margin-bottom:28px;">Texnologiyalar tarifga qarab farqlanadi.</p>
+  </div>
+  <div class="tech-wrap fade">
+    <table class="tbl">
+      <thead><tr><th id="tt_col">Texnologiya</th><th>Free</th><th>Lite</th><th>Mini</th><th>Starter</th><th>Basic</th><th>Standard</th><th>Plus</th><th>Pro</th><th>Advanced</th><th>Business</th><th>Premium</th><th>Ultra</th><th>Max</th><th>Elite</th><th>Enterprise</th></tr></thead>
+      <tbody id="techBody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+<footer>
+  <div class="footer-logo"><span class="accent">TBH</span> Platform</div>
+  <p id="f_r">© 2025 TBH Platform. Barcha huquqlar himoyalangan.</p>
+  <div class="footer-links"><a href="#" id="f_p">Maxfiylik</a><a href="#" id="f_t">Shartlar</a><a href="index.html#faq">Aloqa</a><a href="admin.html">Admin</a></div>
+</footer>
+<script src="shared.js"></script>
+<script>
+const TX={
+  uz:{ni_home:"Bosh sahifa",ni_pricing:"Tariflar",ni_dashboard:"Dashboard",ni_login:"Kirish",ni_reg:"Ro'yxat",pt:"Tariflar",ph:"Har Qanday Loyiha Uchun",ps:"Bepuldan tortib enterprise darajagacha.",p_d:"Kunlik",p_m:"Oylik",p_y:"Yillik",tt_tag:"Texnologiyalar",tt_title:"Qaysi Tarif Nima Qo'llab-quvvatlaydi?",tt_sub:"Texnologiyalar tarifga qarab farqlanadi.",tt_col:"Texnologiya",f_r:"© 2025 TBH Platform. Barcha huquqlar himoyalangan.",f_p:"Maxfiylik",f_t:"Shartlar",choose:"Tanlash",free:"Bepul",perD:"/kun",perM:"/oy",perY:"/yil"},
+  ru:{ni_home:"Главная",ni_pricing:"Тарифы",ni_dashboard:"Дашборд",ni_login:"Войти",ni_reg:"Регистрация",pt:"Тарифы",ph:"Для Любого Проекта",ps:"От бесплатного до enterprise.",p_d:"Ежедневно",p_m:"Ежемесячно",p_y:"Ежегодно",tt_tag:"Технологии",tt_title:"Что поддерживает каждый тариф?",tt_sub:"Технологии различаются в зависимости от тарифа.",tt_col:"Технология",f_r:"© 2025 TBH Platform. Все права защищены.",f_p:"Конфиденциальность",f_t:"Условия",choose:"Выбрать",free:"Бесплатно",perD:"/день",perM:"/мес",perY:"/год"},
+  en:{ni_home:"Home",ni_pricing:"Pricing",ni_dashboard:"Dashboard",ni_login:"Login",ni_reg:"Register",pt:"Pricing",ph:"For Any Project",ps:"From free to enterprise level.",p_d:"Daily",p_m:"Monthly",p_y:"Yearly",tt_tag:"Technologies",tt_title:"What Does Each Plan Support?",tt_sub:"Technologies vary by plan.",tt_col:"Technology",f_r:"© 2025 TBH Platform. All rights reserved.",f_p:"Privacy",f_t:"Terms",choose:"Choose",free:"Free",perD:"/day",perM:"/mo",perY:"/yr"},
+};
+function applyLang(){
+  const d=TX[TBH.lang];
+  Object.keys(d).forEach(k=>{const el=document.getElementById(k);if(el)el.innerHTML=d[k];});
+  ['uz','ru','en'].forEach((l,i)=>document.querySelectorAll('#langSw button')[i].classList.toggle('on',TBH.lang===l));
+  ['uzs','usd','rub'].forEach((c,i)=>document.querySelectorAll('#currSw button')[i].classList.toggle('on',TBH.curr===c));
+  if(TBH.user){document.getElementById('ni_login').textContent=TBH.user.username;document.getElementById('ni_login').onclick=()=>window.location='dashboard.html';document.getElementById('ni_reg').textContent='Dashboard';document.getElementById('ni_reg').onclick=()=>window.location='dashboard.html';}
+  renderPlans();
+}
+function setLang(l){saveLang(l);applyLang();}
+function setCurrNav(c){saveCurr(c);['uzs','usd','rub'].forEach((x,i)=>document.querySelectorAll('#currSw button')[i].classList.toggle('on',x===c));renderPlans();}
+function setCurrB(c,btn){saveCurr(c);document.querySelectorAll('#currSwB button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');['uzs','usd','rub'].forEach((x,i)=>document.querySelectorAll('#currSw button')[i].classList.toggle('on',x===c));renderPlans();}
+function setPeriod(p,btn){savePeriod(p);document.querySelectorAll('#periodSw button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPlans();}
+function renderPlans(){
+  const L=TX[TBH.lang];
+  document.getElementById('plansGrid').innerHTML=plans.map(p=>{
+    const v=p[TBH.period][TBH.curr];
+    let priceHtml;
+    if(v===0){priceHtml=`<div class="plan-price">${L.free}</div>`;}
+    else if(TBH.curr==='uzs'){priceHtml=`<div class="plan-price">${v.toLocaleString()}<span class="per"> so'm${TBH.period==='daily'?L.perD:TBH.period==='monthly'?L.perM:L.perY}</span></div>`;}
+    else if(TBH.curr==='usd'){priceHtml=`<div class="plan-price"><span class="sym">$</span>${v}<span class="per">${TBH.period==='daily'?L.perD:TBH.period==='monthly'?L.perM:L.perY}</span></div>`;}
+    else{priceHtml=`<div class="plan-price"><span class="sym">₽</span>${v.toLocaleString()}<span class="per">${TBH.period==='daily'?L.perD:TBH.period==='monthly'?L.perM:L.perY}</span></div>`;}
+    const bdg=p.badge?`<div class="plan-bdg ${p.badge==='top'?'top':p.badge==='new'?'new':'hot'}">${p.badge==='hot'?'🔥 TOP':p.badge==='new'?'✨ NEW':'⭐ ELITE'}</div>`:'';
+    const bc=p.name==='Enterprise'?'gold':p.badge==='hot'?'filled':'outline';
+    const desc=typeof p.desc==='object'?p.desc[TBH.lang]:p.desc;
+    return `<div class="plan${p.badge==='hot'?' pop':p.name==='Enterprise'?' ent':''}">
+      ${bdg}<div class="plan-name">${p.name}</div>${priceHtml}
+      <div class="plan-desc">${desc}</div>
+      <ul class="plan-specs">
+        <li><span class="ok">✓</span> RAM: ${p.ram}</li>
+        <li><span class="ok">✓</span> Disk: ${p.disk}</li>
+        <li><span class="ok">✓</span> Bot: ${p.bots}</li>
+        ${p.name==='Free'?`<li><span class="no">✕</span> 24h reset</li>`:`<li><span class="ok">✓</span> Backup</li>`}
+      </ul>
+      <button class="plan-btn ${bc}" onclick="choosePlan('${p.name}')">${L.choose}</button>
+    </div>`;
+  }).join('');
+}
+function choosePlan(name){
+  const ses=localStorage.getItem('tbh_session');
+  if(ses){
+    // Kirgan — dashboard > tarif sahifasiga
+    localStorage.setItem('tbh_selected_plan',name);
+    window.location.href='dashboard.html';
+  } else {
+    // Kirmagan — ro'yxatdan o'tish modalini ko'rsat
+    localStorage.setItem('tbh_selected_plan',name);
+    openModal('reg');
+  }
+}
+function renderTech(){
+  document.getElementById('techBody').innerHTML=techData.map(r=>`<tr><td class="tech-name">${r.tech}</td>${r.support.map(s=>`<td>${s?'<span class="check">✓</span>':'<span class="cross">✗</span>'}</td>`).join('')}</tr>`).join('');
+}
+['daily','monthly','yearly'].forEach((p,i)=>document.querySelectorAll('#periodSw button')[i].classList.toggle('on',TBH.period===p));
+['uzs','usd','rub'].forEach((c,i)=>document.querySelectorAll('#currSwB button')[i].classList.toggle('on',TBH.curr===c));
+document.querySelectorAll('.fade').forEach(el=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08}).observe(el));
+// Pricing sahifasida ham session tekshir — nav tugmalari
+const _pses=localStorage.getItem('tbh_session');
+if(_pses){
+  const lb=document.getElementById('ni_login');
+  const rb=document.getElementById('ni_reg');
+  if(lb){lb.textContent='Dashboard';lb.onclick=(e)=>{e.preventDefault();window.location.href='dashboard.html';};}
+  if(rb){rb.textContent={uz:'Chiqish',ru:'Выйти',en:'Logout'}[TBH.lang]||'Logout';rb.onclick=(e)=>{e.preventDefault();localStorage.removeItem('tbh_session');location.reload();};}
+}
+applyLang();renderTech();
+</script>
+</body>
+</html>

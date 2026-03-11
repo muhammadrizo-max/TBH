@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard — TBH Platform</title>
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{--nav-h:62px;}
+.dash-wrap{display:grid;grid-template-columns:224px 1fr;min-height:calc(100vh - var(--nav-h));margin-top:var(--nav-h);}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;flex-shrink:0;}
+.sb-user{padding:0 16px 18px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sb-av{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;margin-bottom:8px;}
+.sb-name{font-weight:700;font-size:.88rem;}
+.sb-plan{display:inline-flex;align-items:center;gap:4px;background:rgba(79,110,247,.1);color:var(--accent);font-size:.7rem;font-weight:600;padding:3px 8px;border-radius:99px;margin-top:4px;}
+.sb-bal{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:10px 16px;color:var(--muted);font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;border-left:2px solid transparent;user-select:none;}
+.sb-item:hover,.sb-item.on{color:var(--text);background:rgba(79,110,247,.07);border-left-color:var(--accent);}
+.main{padding:28px 32px;overflow-y:auto;min-width:0;}
+.tab{display:none;animation:fadeTab .22s ease;}
+.tab.on{display:block;}
+@keyframes fadeTab{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pg-title{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;margin-bottom:3px;}
+.pg-sub{color:var(--muted);font-size:.84rem;margin-bottom:22px;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:11px;margin-bottom:18px;}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px;}
+.sc-l{color:var(--muted);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.sc-v{font-size:1.4rem;font-weight:800;font-family:var(--mono);}
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:17px;margin-bottom:14px;}
+.cc h4{font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:11px;}
+.chart-row{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:14px;}
+.res-list{display:flex;flex-direction:column;gap:12px;}
+.res-item .rt{display:flex;justify-content:space-between;margin-bottom:4px;}
+.res-lbl{font-size:.78rem;font-weight:600;}
+.res-pct{font-size:.75rem;color:var(--muted);}
+.res-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.res-fill{height:100%;border-radius:99px;transition:width .6s ease;}
+/* BOTS */
+.bot-list{display:flex;flex-direction:column;gap:9px;}
+.bot-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;transition:border-color .2s;}
+.bot-card:hover{border-color:rgba(79,110,247,.3);}
+.bot-info{display:flex;align-items:center;gap:10px;}
+.bot-ico{width:36px;height:36px;background:rgba(79,110,247,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.bot-nm{font-weight:700;font-size:.87rem;}
+.bot-un{color:var(--muted);font-size:.74rem;}
+.bot-acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.empty-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--muted);font-size:.88rem;}
+/* PAYMENTS */
+.ptabs{display:flex;gap:7px;margin-bottom:13px;flex-wrap:wrap;}
+.ptab{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:.77rem;font-weight:600;padding:7px 13px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.ptab.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+/* PLAN */
+.cur-plan{background:linear-gradient(135deg,rgba(79,110,247,.1),rgba(0,229,160,.06));border:1px solid rgba(79,110,247,.28);border-radius:16px;padding:24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+.cp-nm{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
+.cp-specs{display:flex;gap:16px;flex-wrap:wrap;}
+.cp-spec .v{font-size:1.05rem;font-weight:800;font-family:var(--mono);}
+.cp-spec .l{font-size:.67rem;color:var(--muted);}
+/* REF */
+.ref-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px;}
+.ref-inp-row{display:flex;gap:8px;margin:10px 0;}
+.ref-inp{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.8rem;padding:9px 12px;border-radius:8px;outline:none;}
+/* TOPUP */
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0;}
+.pm{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:13px;text-align:center;cursor:pointer;transition:all .2s;font-size:.83rem;font-weight:600;}
+.pm:hover,.pm.sel{border-color:var(--accent);color:var(--accent);background:rgba(79,110,247,.07);}
+.form-err{color:var(--danger);font-size:.79rem;margin-bottom:8px;display:none;}
+@media(max-width:860px){.dash-wrap{grid-template-columns:1fr;}.sidebar{position:relative;height:auto;display:flex;overflow-x:auto;padding:10px 0;border-right:none;border-bottom:1px solid var(--border);}.sb-user{display:none;}.sb-item{flex-shrink:0;border-left:none;border-bottom:2px solid transparent;padding:8px 14px;}.sb-item.on{border-bottom-color:var(--accent);background:none;}.main{padding:18px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div><span class="accent">TBH</span>&nbsp;Platform</a>
+  <div class="nav-links">
+    <a href="index.html" id="ni_home">Bosh sahifa</a>
+    <a href="pricing.html" id="ni_pr">Tariflar</a>
+    <a href="dashboard.html" class="active" id="ni_dash">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="sw" id="langSw">
+      <button onclick="setLang('uz')">UZ</button>
+      <button onclick="setLang('ru')">RU</button>
+      <button onclick="setLang('en')">EN</button>
+    </div>
+    <button class="btn-nav-login" id="navOut" onclick="doLogout()">Chiqish</button>
+  </div>
+</nav>
+
+<div class="dash-wrap">
+  <div class="sidebar">
+    <div class="sb-user">
+      <div class="sb-av" id="sbAv">U</div>
+      <div class="sb-name" id="sbName">—</div>
+      <div class="sb-plan" id="sbPlan">Free</div>
+      <div class="sb-bal" id="sbBal">0 so'm</div>
+    </div>
+    <div class="sb-item on"  onclick="showTab('ov',this)">📊 <span id="sb_ov">Umumiy</span></div>
+    <div class="sb-item"     onclick="showTab('bots',this)">🤖 <span id="sb_bo">Botlarim</span></div>
+    <div class="sb-item"     onclick="showTab('pay',this)">💳 <span id="sb_pa">To'lovlar</span></div>
+    <div class="sb-item"     onclick="showTab('plan',this)">📦 <span id="sb_pl">Tarifim</span></div>
+    <div class="sb-item"     onclick="showTab('ref',this)">🎁 <span id="sb_rf">Referral</span></div>
+    <div class="sb-item"     onclick="showTab('set',this)">⚙️ <span id="sb_st">Sozlamalar</span></div>
+  </div>
+
+  <div class="main">
+    <!-- ── OVERVIEW ── -->
+    <div class="tab on" id="tab-ov">
+      <div class="pg-title" id="ov_t">Umumiy Ko'rinish</div>
+      <div class="pg-sub"   id="ov_s">Hisob statistikasi</div>
+      <div class="sgrid">
+        <div class="sc"><div class="sc-l" id="ovl1">Botlarim</div><div class="sc-v" style="color:var(--accent)"  id="ovv1">—</div></div>
+        <div class="sc"><div class="sc-l" id="ovl2">Balans</div>  <div class="sc-v" style="color:var(--accent2)" id="ovv2">—</div></div>
+        <div class="sc"><div class="sc-l" id="ovl3">Tarif</div>   <div class="sc-v" style="color:var(--accent3);font-size:1rem;" id="ovv3">—</div></div>
+        <div class="sc"><div class="sc-l" id="ovl4">Uptime</div>  <div class="sc-v" style="color:var(--accent2)">99.9%</div></div>
+      </div>
+      <div class="chart-row">
+        <div class="cc"><h4 id="ov_ch1">Faollik</h4><div style="height:170px;"><canvas id="actChart"></canvas></div></div>
+        <div class="cc"><h4 id="ov_ch2">Resurslar</h4>
+          <div class="res-list">
+            <div class="res-item"><div class="rt"><span class="res-lbl">CPU</span><span class="res-pct" id="cpuPct">—</span></div><div class="res-bar"><div class="res-fill" style="background:var(--accent);width:0%" id="cpuBar"></div></div></div>
+            <div class="res-item"><div class="rt"><span class="res-lbl">RAM</span><span class="res-pct" id="ramPct">—</span></div><div class="res-bar"><div class="res-fill" style="background:var(--accent2);width:0%" id="ramBar"></div></div></div>
+            <div class="res-item"><div class="rt"><span class="res-lbl">Disk</span><span class="res-pct" id="diskPct">—</span></div><div class="res-bar"><div class="res-fill" style="background:var(--accent3);width:0%" id="diskBar"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BOTS ── -->
+    <div class="tab" id="tab-bots">
+      <div class="pg-title" id="bt_t">Botlarim</div>
+      <div class="pg-sub"   id="bt_s">Botlaringizni boshqaring</div>
+      <div style="margin-bottom:13px;">
+        <button class="btn btn-primary btn-sm" onclick="openModal('addBot')" id="bt_add">+ Bot Qo'shish</button>
+      </div>
+      <div class="bot-list" id="botList"></div>
+    </div>
+
+    <!-- ── PAYMENTS ── -->
+    <div class="tab" id="tab-pay">
+      <div class="pg-title" id="py_t">To'lovlar</div>
+      <div class="pg-sub"   id="py_s">Balans va to'lovlar tarixi</div>
+      <div class="sgrid" style="margin-bottom:14px;">
+        <div class="sc"><div class="sc-l" id="pyl1">Balans</div>     <div class="sc-v" style="color:var(--accent2)" id="pyv1">—</div></div>
+        <div class="sc"><div class="sc-l" id="pyl2">Jami To'langan</div><div class="sc-v" style="color:var(--accent)" id="pyv2">—</div></div>
+      </div>
+      <div style="margin-bottom:13px;">
+        <button class="btn btn-primary btn-sm" onclick="openModal('topup')" id="py_top">+ Balans To'ldirish</button>
+      </div>
+      <div class="ptabs">
+        <button class="ptab on" onclick="filterPay('all',this)"  id="pf_a">Barchasi</button>
+        <button class="ptab"    onclick="filterPay('in',this)"   id="pf_i">Kirim</button>
+        <button class="ptab"    onclick="filterPay('out',this)"  id="pf_o">Chiqim</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="tbl"><thead><tr>
+          <th id="pc1">Sana</th><th id="pc2">Tavsif</th><th id="pc3">Summa</th><th id="pc4">Holat</th>
+        </tr></thead><tbody id="payBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ── PLAN ── -->
+    <div class="tab" id="tab-plan">
+      <div class="pg-title" id="pl_t">Tarifim</div>
+      <div class="pg-sub"   id="pl_s">Joriy tarif va resurslar</div>
+      <div class="cur-plan">
+        <div>
+          <div class="cp-nm" id="cpNm">Free Plan</div>
+          <div style="color:var(--muted);font-size:.82rem;margin-bottom:12px;" id="cpExp">Bepul tarif</div>
+          <a href="pricing.html"><button class="btn btn-primary btn-sm" id="pl_up">Tarifni Yangilash</button></a>
+        </div>
+        <div class="cp-specs">
+          <div class="cp-spec"><div class="v" id="cpRam">—</div><div class="l">RAM</div></div>
+          <div class="cp-spec"><div class="v" id="cpDisk">—</div><div class="l">Disk</div></div>
+          <div class="cp-spec"><div class="v" id="cpBots">—</div><div class="l">Bot</div></div>
+        </div>
+      </div>
+      <div class="cc"><h4 id="pl_ch">Resurs grafigi</h4><div style="height:170px;"><canvas id="planChart"></canvas></div></div>
+    </div>
+
+    <!-- ── REFERRAL ── -->
+    <div class="tab" id="tab-ref">
+      <div class="pg-title" id="rf_t">Referral Tizimi</div>
+      <div class="pg-sub"   id="rf_s">Do'stlarni taklif qiling, mukofot oling</div>
+      <div class="sgrid">
+        <div class="sc"><div class="sc-l" id="rfl1">Referrallar</div><div class="sc-v" style="color:var(--accent)"  id="rfv1">0</div></div>
+        <div class="sc"><div class="sc-l" id="rfl2">Mukofotlar</div> <div class="sc-v" style="color:var(--accent2)" id="rfv2">0</div></div>
+      </div>
+      <div class="ref-box">
+        <div style="font-size:.88rem;font-weight:700;margin-bottom:4px;" id="rf_lt">Referral havolangiz:</div>
+        <div class="ref-inp-row">
+          <input class="ref-inp" id="refLink" readonly>
+          <button class="btn btn-primary btn-sm" onclick="copyRef()" id="rf_cp">Nusxalash</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="tab" id="tab-set">
+      <div class="pg-title" id="st_t">Sozlamalar</div>
+      <div class="pg-sub"   id="st_s">Hisob sozlamalari</div>
+      <div class="cc" style="margin-bottom:13px;">
+        <h4 id="st_pr">Profil</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px;margin-top:12px;">
+          <div><label class="label" id="st_un">Username</label><input class="input" id="stUn"></div>
+          <div><label class="label" id="st_em">Email</label><input class="input" id="stEm" type="email" disabled style="opacity:.5;cursor:not-allowed;"></div>
+          <div><label class="label" id="st_tg">Telegram</label><input class="input" id="stTg" placeholder="@username"></div>
+          <div><label class="label" id="st_lg">Til</label>
+            <select class="input" id="stLg" onchange="setLang(this.value)">
+              <option value="uz">O'zbek</option><option value="ru">Русский</option><option value="en">English</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-err" id="profErr"></div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="saveProfile()" id="st_sv">Saqlash</button>
+      </div>
+      <div class="cc">
+        <h4 id="st_sc">Parolni O'zgartirish</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px;margin-top:12px;">
+          <div><label class="label" id="st_cp">Joriy parol</label><input class="input" id="stOp" type="password" placeholder="••••••••"></div>
+          <div><label class="label" id="st_np">Yangi parol</label><input class="input" id="stNp" type="password" placeholder="Min 6 ta belgi"></div>
+        </div>
+        <div class="form-err" id="passErr"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="changePass()" id="st_cp2">O'zgartirish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADD BOT MODAL ═══ -->
+<div class="modal-bg" id="addBotModal" onclick="if(event.target===this)closeModal('addBot')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addBot')">✕</button>
+    <div class="modal-title" id="ab_t">Bot Qo'shish</div>
+    <div class="modal-sub"  id="ab_s">Bot ma'lumotlarini kiriting</div>
+    <div class="form-group"><label class="label" id="ab_nm">Bot nomi</label><input class="input" id="abNm" placeholder="MyBot"></div>
+    <div class="form-group"><label class="label" id="ab_un">Bot username</label><input class="input" id="abUn" placeholder="@mybot"></div>
+    <div class="form-group"><label class="label" id="ab_tk">Bot Token</label><input class="input" id="abTk" placeholder="123456:ABC-DEF..." type="password"></div>
+    <div class="form-group"><label class="label" id="ab_lg">Til</label>
+      <select class="input" id="abLg"><option>Python</option><option>Node.js</option><option>Go</option><option>PHP</option><option>Ruby</option><option>Java</option></select></div>
+    <div class="form-group"><label class="label" id="ab_sv">Server</label>
+      <select class="input" id="abSv"><option>Frankfurt</option><option>Moscow</option><option>Singapore</option></select></div>
+    <div class="form-err" id="abErr"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="abBtn" onclick="addBot()">Qo'shish</button>
+  </div>
+</div>
+
+<!-- ═══ MANAGE BOT MODAL ═══ -->
+<div class="modal-bg" id="manageBotModal" onclick="if(event.target===this)closeModal('manageBot')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('manageBot')">✕</button>
+    <div class="modal-title" id="mb_t">Bot Boshqaruv</div>
+    <div class="cc" style="margin:14px 0 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:700;" id="mbNm">—</span>
+        <span class="badge" id="mbSt">—</span>
+      </div>
+      <div style="color:var(--muted);font-size:.79rem;" id="mbInfo">—</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+      <button class="btn btn-outline" style="justify-content:center;" onclick="restartBot()" id="mb_rs">🔄 Qayta Ishga Tushirish</button>
+      <button class="btn btn-danger"  style="justify-content:center;" onclick="deleteBotConfirm()" id="mb_dl">🗑 Botni O'chirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOPUP MODAL ═══ -->
+<div class="modal-bg" id="topupModal" onclick="if(event.target===this)closeModal('topup')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('topup')">✕</button>
+    <div class="modal-title" id="tu_t">Balans To'ldirish</div>
+    <div class="modal-sub"  id="tu_s">To'lov usulini va summani tanlang</div>
+    <div class="form-group"><label class="label" id="tu_am">Summa (so'm)</label>
+      <input class="input" id="tuAmt" type="number" placeholder="50000" min="10000"></div>
+    <div class="pay-methods">
+      <div class="pm" onclick="selPay(this,'payme')">💳 Payme</div>
+      <div class="pm" onclick="selPay(this,'click')">🔵 Click</div>
+      <div class="pm" onclick="selPay(this,'uzum')">🟠 Uzum Pay</div>
+      <div class="pm" onclick="selPay(this,'visa')">💳 Visa/MC</div>
+    </div>
+    <div id="tuNote" style="background:rgba(247,201,72,.08);border:1px solid rgba(247,201,72,.2);border-radius:8px;padding:10px 13px;font-size:.78rem;color:var(--muted);margin-bottom:12px;display:none;"></div>
+    <div class="form-err" id="tuErr"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="tuBtn" onclick="doTopup()">To'lovni Boshlash</button>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+// ── i18n ────────────────────────────────────────────────────
+const TX = {
+  uz:{ni_home:"Bosh sahifa",ni_pr:"Tariflar",ni_dash:"Dashboard",navOut:"Chiqish",sb_ov:"Umumiy",sb_bo:"Botlarim",sb_pa:"To'lovlar",sb_pl:"Tarifim",sb_rf:"Referral",sb_st:"Sozlamalar",ov_t:"Umumiy Ko'rinish",ov_s:"Hisob statistikasi",ovl1:"Botlarim",ovl2:"Balans",ovl3:"Tarif",ovl4:"Uptime",ov_ch1:"Faollik",ov_ch2:"Resurslar",bt_t:"Botlarim",bt_s:"Botlaringizni boshqaring",bt_add:"+ Bot Qo'shish",py_t:"To'lovlar",py_s:"Balans va tarixi",pyl1:"Balans",pyl2:"Jami To'langan",py_top:"+ Balans To'ldirish",pf_a:"Barchasi",pf_i:"Kirim",pf_o:"Chiqim",pc1:"Sana",pc2:"Tavsif",pc3:"Summa",pc4:"Holat",pl_t:"Tarifim",pl_s:"Joriy tarif va resurslar",pl_up:"Yangilash",pl_ch:"Resurs grafigi",rf_t:"Referral",rf_s:"Do'stlarni taklif qiling",rfl1:"Referrallar",rfl2:"Mukofotlar",rf_lt:"Referral havolangiz:",rf_cp:"Nusxalash",st_t:"Sozlamalar",st_s:"Hisob sozlamalari",st_pr:"Profil",st_un:"Username",st_em:"Email",st_tg:"Telegram",st_lg:"Til",st_sv:"Saqlash",st_sc:"Parolni O'zgartirish",st_cp:"Joriy parol",st_np:"Yangi parol",st_cp2:"O'zgartirish",ab_t:"Bot Qo'shish",ab_s:"Bot ma'lumotlarini kiriting",ab_nm:"Bot nomi",ab_un:"Bot username",ab_tk:"Bot Token",ab_lg:"Dasturlash tili",ab_sv:"Server",mb_t:"Bot Boshqaruv",mb_rs:"🔄 Qayta Ishga Tushirish",mb_dl:"🗑 Botni O'chirish",tu_t:"Balans To'ldirish",tu_s:"To'lov usulini tanlang",tu_am:"Summa (so'm)",cpExp:"Joriy tarif"},
+  ru:{ni_home:"Главная",ni_pr:"Тарифы",ni_dash:"Дашборд",navOut:"Выйти",sb_ov:"Обзор",sb_bo:"Мои боты",sb_pa:"Платежи",sb_pl:"Тариф",sb_rf:"Реферал",sb_st:"Настройки",ov_t:"Обзор",ov_s:"Статистика аккаунта",ovl1:"Ботов",ovl2:"Баланс",ovl3:"Тариф",ovl4:"Аптайм",ov_ch1:"Активность",ov_ch2:"Ресурсы",bt_t:"Мои боты",bt_s:"Управляйте ботами",bt_add:"+ Добавить бота",py_t:"Платежи",py_s:"Баланс и история",pyl1:"Баланс",pyl2:"Всего оплачено",py_top:"+ Пополнить баланс",pf_a:"Все",pf_i:"Приход",pf_o:"Расход",pc1:"Дата",pc2:"Описание",pc3:"Сумма",pc4:"Статус",pl_t:"Мой тариф",pl_s:"Текущий тариф и ресурсы",pl_up:"Обновить",pl_ch:"График ресурсов",rf_t:"Реферальная система",rf_s:"Приглашайте и зарабатывайте",rfl1:"Рефералов",rfl2:"Наград",rf_lt:"Ваша реферальная ссылка:",rf_cp:"Копировать",st_t:"Настройки",st_s:"Настройки аккаунта",st_pr:"Профиль",st_un:"Username",st_em:"Email",st_tg:"Telegram",st_lg:"Язык",st_sv:"Сохранить",st_sc:"Смена пароля",st_cp:"Текущий пароль",st_np:"Новый пароль",st_cp2:"Изменить",ab_t:"Добавить бота",ab_s:"Введите данные бота",ab_nm:"Название",ab_un:"Username",ab_tk:"Token",ab_lg:"Язык",ab_sv:"Сервер",mb_t:"Управление ботом",mb_rs:"🔄 Перезапустить",mb_dl:"🗑 Удалить",tu_t:"Пополнить баланс",tu_s:"Выберите метод оплаты",tu_am:"Сумма (сум)",cpExp:"Текущий тариф"},
+  en:{ni_home:"Home",ni_pr:"Pricing",ni_dash:"Dashboard",navOut:"Logout",sb_ov:"Overview",sb_bo:"My Bots",sb_pa:"Payments",sb_pl:"My Plan",sb_rf:"Referral",sb_st:"Settings",ov_t:"Overview",ov_s:"Account statistics",ovl1:"My Bots",ovl2:"Balance",ovl3:"Plan",ovl4:"Uptime",ov_ch1:"Activity",ov_ch2:"Resources",bt_t:"My Bots",bt_s:"Manage your bots",bt_add:"+ Add Bot",py_t:"Payments",py_s:"Balance and history",pyl1:"Balance",pyl2:"Total Paid",py_top:"+ Top Up Balance",pf_a:"All",pf_i:"Income",pf_o:"Expense",pc1:"Date",pc2:"Description",pc3:"Amount",pc4:"Status",pl_t:"My Plan",pl_s:"Current plan and resources",pl_up:"Upgrade",pl_ch:"Resource chart",rf_t:"Referral System",rf_s:"Invite friends, earn rewards",rfl1:"Referrals",rfl2:"Rewards",rf_lt:"Your referral link:",rf_cp:"Copy",st_t:"Settings",st_s:"Account settings",st_pr:"Profile",st_un:"Username",st_em:"Email",st_tg:"Telegram",st_lg:"Language",st_sv:"Save",st_sc:"Change Password",st_cp:"Current password",st_np:"New password",st_cp2:"Change",ab_t:"Add Bot",ab_s:"Enter bot details",ab_nm:"Bot name",ab_un:"Bot username",ab_tk:"Bot Token",ab_lg:"Language",ab_sv:"Server",mb_t:"Manage Bot",mb_rs:"🔄 Restart Bot",mb_dl:"🗑 Delete Bot",tu_t:"Top Up Balance",tu_s:"Select payment method",tu_am:"Amount (UZS)",cpExp:"Current plan"},
+};
+
+// ── State ───────────────────────────────────────────────────
+let CU = null;          // current user
+let allPays = [];       // cached payments
+let payFilter = 'all';
+let selMethod = '';
+let managingId = null;
+let actChart = null, planChart = null;
+
+// ── Init ─────────────────────────────────────────────────────
+async function init() {
+  if (!isLoggedIn()) { window.location.href = 'index.html'; return; }
+  applyLang();
+  await loadUser();
+  renderSidebar();
+  await loadBots();
+  await loadPayments();
+  renderOverview();
+  renderPlan();
+  renderReferral();
+  renderSettings();
+  initActChart();
+  updateResources();
+}
+
+async function loadUser() {
+  try {
+    CU = await GET('/users/me');
+    setUser(CU);
+  } catch(e) {
+    // Token eskirgan bo'lsa
+    removeToken();
+    window.location.href = 'index.html';
+  }
+}
+
+// ── Language ────────────────────────────────────────────────
+function applyLang() {
+  const d = TX[TBH.lang];
+  Object.keys(d).forEach(k => { const el = document.getElementById(k); if(el) el.textContent = d[k]; });
+  document.querySelectorAll('#langSw button').forEach((b,i) => b.classList.toggle('on', ['uz','ru','en'][i] === TBH.lang));
+  if(document.getElementById('stLg')) document.getElementById('stLg').value = TBH.lang;
+}
+function setLang(l) { saveLang(l); applyLang(); }
+
+// ── Sidebar ─────────────────────────────────────────────────
+function renderSidebar() {
+  if(!CU) return;
+  document.getElementById('sbAv').textContent   = (CU.username||'U')[0].toUpperCase();
+  document.getElementById('sbName').textContent = CU.username || CU.email;
+  document.getElementById('sbPlan').textContent = (CU.plan||'Free') + ' Plan';
+  document.getElementById('sbBal').textContent  = (CU.balance||0).toLocaleString() + ' so\'m';
+}
+
+// ── Tabs ─────────────────────────────────────────────────────
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+  el.classList.add('on');
+  if(name==='plan' && !planChart) initPlanChart();
+}
+
+// ── Overview ─────────────────────────────────────────────────
+function renderOverview() {
+  if(!CU) return;
+  document.getElementById('ovv1').textContent = CU.bot_count ?? '—';
+  document.getElementById('ovv2').textContent = (CU.balance||0).toLocaleString() + ' so\'m';
+  document.getElementById('ovv3').textContent = CU.plan || 'Free';
+}
+function updateResources() {
+  // Demo resurs qiymatlari (haqiqiy monitoring keyinroq)
+  const cpu=14, ram=22, disk=8;
+  document.getElementById('cpuPct').textContent = cpu+'%';
+  document.getElementById('cpuBar').style.width = cpu+'%';
+  document.getElementById('ramPct').textContent = ram+'%';
+  document.getElementById('ramBar').style.width = ram+'%';
+  document.getElementById('diskPct').textContent= disk+'%';
+  document.getElementById('diskBar').style.width= disk+'%';
+}
+
+// ── Bots ─────────────────────────────────────────────────────
+let botsData = [];
+async function loadBots() {
+  try {
+    botsData = await GET('/bots/');
+    renderBots();
+    document.getElementById('ovv1').textContent = botsData.length;
+  } catch(e) {}
+}
+function renderBots() {
+  const el = document.getElementById('botList');
+  if(!botsData.length) {
+    el.innerHTML = `<div class="empty-box">${{uz:"Hali bot qo'shilmagan. Yuqoridagi tugmani bosing.",ru:"Ботов нет. Нажмите кнопку выше.",en:"No bots yet. Click the button above."}[TBH.lang]}</div>`;
+    return;
+  }
+  const lbl = { uz:{manage:"Boshqarish",start:"Start",stop:"Stop"}, ru:{manage:"Управлять",start:"Запуск",stop:"Стоп"}, en:{manage:"Manage",start:"Start",stop:"Stop"} }[TBH.lang];
+  el.innerHTML = botsData.map(b => `
+    <div class="bot-card">
+      <div class="bot-info">
+        <div class="bot-ico">🤖</div>
+        <div><div class="bot-nm">${b.name}</div><div class="bot-un">${b.username} · ${b.lang}</div></div>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);">${b.server}</div>
+      <div class="bot-acts">
+        <span class="badge ${b.running?'badge-green':'badge-red'}">${b.running?{uz:'Faol',ru:'Активен',en:'Active'}[TBH.lang]:{uz:"To'xtatilgan",ru:'Остановлен',en:'Stopped'}[TBH.lang]}</span>
+        <button class="btn btn-outline btn-sm" onclick="openManage(${b.id})">${lbl.manage}</button>
+        <button class="btn ${b.running?'btn-danger':'btn-primary'} btn-sm" onclick="toggleBot(${b.id},${b.running})">${b.running?lbl.stop:lbl.start}</button>
+      </div>
+    </div>`).join('');
+}
+
+async function addBot() {
+  const btn = document.getElementById('abBtn');
+  const nm  = document.getElementById('abNm').value.trim();
+  const un  = document.getElementById('abUn').value.trim();
+  const tk  = document.getElementById('abTk').value.trim();
+  const lg  = document.getElementById('abLg').value;
+  const sv  = document.getElementById('abSv').value;
+  const errEl = document.getElementById('abErr');
+  errEl.style.display='none';
+  const errs={uz:{empty:"Barcha maydonlarni to'ldiring"},ru:{empty:"Заполните все поля"},en:{empty:"Fill in all fields"}};
+  if(!nm||!un||!tk){errEl.textContent=errs[TBH.lang].empty;errEl.style.display='block';return;}
+  btnLoad(btn,true);
+  try {
+    const res = await POST('/bots/', {name:nm, username:un, token:tk, lang:lg, server:sv});
+    botsData.push(res.bot);
+    renderBots();
+    closeModal('addBot');
+    document.getElementById('abNm').value='';document.getElementById('abUn').value='';document.getElementById('abTk').value='';
+    toast({uz:'✓ Bot qo\'shildi!',ru:'✓ Бот добавлен!',en:'✓ Bot added!'}[TBH.lang]);
+    document.getElementById('ovv1').textContent = botsData.length;
+  } catch(e){errEl.textContent=e.message;errEl.style.display='block';}
+  finally{btnLoad(btn,false);}
+}
+
+function openManage(id) {
+  managingId = id;
+  const b = botsData.find(x=>x.id===id);
+  if(!b) return;
+  document.getElementById('mbNm').textContent   = b.name;
+  document.getElementById('mbSt').textContent   = b.running?{uz:'Faol',ru:'Активен',en:'Active'}[TBH.lang]:{uz:"To'xtatilgan",ru:'Остановлен',en:'Stopped'}[TBH.lang];
+  document.getElementById('mbSt').className     = 'badge '+(b.running?'badge-green':'badge-red');
+  document.getElementById('mbInfo').textContent = `${b.username} · ${b.lang} · ${b.server}`;
+  openModal('manageBot');
+}
+
+async function toggleBot(id, running) {
+  try {
+    const res = await PATCH(`/bots/${id}/toggle`);
+    const b = botsData.find(x=>x.id===id);
+    if(b) b.running = res.running;
+    renderBots();
+    toast({uz:res.running?'✓ Bot ishga tushdi':'Bot to\'xtatildi',ru:res.running?'✓ Бот запущен':'Бот остановлен',en:res.running?'✓ Bot started':'Bot stopped'}[TBH.lang], res.running?'success':'info');
+  } catch(e){ toast(e.message,'error'); }
+}
+
+async function restartBot() {
+  if(!managingId) return;
+  try {
+    await POST(`/bots/${managingId}/restart`);
+    const b = botsData.find(x=>x.id===managingId);
+    if(b) b.running = true;
+    closeModal('manageBot');
+    renderBots();
+    toast({uz:'✓ Bot qayta ishga tushdi!',ru:'✓ Бот перезапущен!',en:'✓ Bot restarted!'}[TBH.lang]);
+  } catch(e){ toast(e.message,'error'); }
+}
+
+async function deleteBotConfirm() {
+  const confirm_msg = {uz:"Botni o'chirishni tasdiqlaysizmi?",ru:"Удалить бота?",en:"Confirm delete bot?"}[TBH.lang];
+  if(!confirm(confirm_msg)) return;
+  try {
+    await DELETE(`/bots/${managingId}`);
+    botsData = botsData.filter(x=>x.id!==managingId);
+    closeModal('manageBot');
+    renderBots();
+    document.getElementById('ovv1').textContent = botsData.length;
+    toast({uz:'Bot o\'chirildi',ru:'Бот удалён',en:'Bot deleted'}[TBH.lang],'info');
+  } catch(e){ toast(e.message,'error'); }
+}
+
+// ── Payments ─────────────────────────────────────────────────
+async function loadPayments() {
+  try {
+    allPays = await GET('/payments/history');
+    renderPayments();
+    document.getElementById('pyv1').textContent = (CU.balance||0).toLocaleString() + ' so\'m';
+    document.getElementById('pyv2').textContent = (CU.total_paid||0).toLocaleString() + ' so\'m';
+  } catch(e){}
+}
+
+function filterPay(f, btn) {
+  payFilter = f;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPayments();
+}
+
+function renderPayments() {
+  const filtered = allPays.filter(p => {
+    if(payFilter==='in')  return p.status==='completed';
+    if(payFilter==='out') return p.status==='failed'||p.status==='cancelled';
+    return true;
+  });
+  const statusLabel = {completed:{uz:'✓ To\'langan',ru:'✓ Оплачено',en:'✓ Paid'},pending:{uz:'⏳ Kutilmoqda',ru:'⏳ Ожидание',en:'⏳ Pending'},failed:{uz:'✗ Xato',ru:'✗ Ошибка',en:'✗ Failed'},cancelled:{uz:'— Bekor',ru:'— Отмена',en:'— Cancelled'}};
+  const empty = {uz:"To'lov tarixi yo'q",ru:"История пуста",en:"No payment history"}[TBH.lang];
+  document.getElementById('payBody').innerHTML = filtered.length===0
+    ? `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">${empty}</td></tr>`
+    : filtered.map(p=>{
+        const sl = statusLabel[p.status]?.[TBH.lang] || p.status;
+        const color = p.status==='completed'?'var(--accent2)':p.status==='pending'?'var(--muted)':'var(--danger)';
+        return `<tr>
+          <td>${new Date(p.created_at).toLocaleDateString()}</td>
+          <td>${p.description||p.method}</td>
+          <td style="color:${color}">${p.amount.toLocaleString()} so'm</td>
+          <td><span style="color:${color};font-size:.78rem;font-weight:600;">${sl}</span></td>
+        </tr>`;
+      }).join('');
+}
+
+// ── Topup ────────────────────────────────────────────────────
+function selPay(el, method) {
+  selMethod = method;
+  document.querySelectorAll('.pm').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  const notes = {
+    payme: {uz:"Payme to'lov sahifasiga yo'naltirilasiz",ru:"Вы будете перенаправлены на Payme",en:"You'll be redirected to Payme"},
+    click: {uz:"Click to'lov sahifasiga yo'naltirilasiz",ru:"Вы будете перенаправлены на Click",en:"You'll be redirected to Click"},
+    uzum:  {uz:"Uzum Pay: Admin tasdiqlashi kerak (1-24 soat)",ru:"Uzum Pay: требует подтверждения администратора",en:"Uzum Pay: requires admin confirmation (1-24h)"},
+    visa:  {uz:"Visa/MC: Admin tasdiqlashi kerak (1-24 soat)",ru:"Visa/MC: требует подтверждения администратора",en:"Visa/MC: requires admin confirmation (1-24h)"},
+  };
+  const note = document.getElementById('tuNote');
+  note.textContent = notes[method][TBH.lang];
+  note.style.display = 'block';
+}
+
+async function doTopup() {
+  const btn = document.getElementById('tuBtn');
+  const amt = parseInt(document.getElementById('tuAmt').value);
+  const errEl = document.getElementById('tuErr');
+  errEl.style.display='none';
+  const msgs={uz:{noamt:"Summani kiriting",min:"Minimum 10,000 so'm",nomet:"To'lov usulini tanlang"},ru:{noamt:"Введите сумму",min:"Минимум 10,000 сум",nomet:"Выберите метод"},en:{noamt:"Enter amount",min:"Minimum 10,000 UZS",nomet:"Select a payment method"}};
+  const m=msgs[TBH.lang];
+  if(!amt){errEl.textContent=m.noamt;errEl.style.display='block';return;}
+  if(amt<10000){errEl.textContent=m.min;errEl.style.display='block';return;}
+  if(!selMethod){errEl.textContent=m.nomet;errEl.style.display='block';return;}
+  btnLoad(btn,true);
+  try {
+    const res = await POST('/payments/create', {amount:amt, method:selMethod});
+    closeModal('topup');
+    document.getElementById('tuAmt').value='';
+    selMethod='';
+    document.querySelectorAll('.pm').forEach(b=>b.classList.remove('sel'));
+    document.getElementById('tuNote').style.display='none';
+
+    if(res.pay_url) {
+      // Payme yoki Click → redirect
+      toast({uz:'To\'lov sahifasiga o\'tilmoqda...',ru:'Переход на страницу оплаты...',en:'Redirecting to payment page...'}[TBH.lang],'info');
+      setTimeout(()=>window.open(res.pay_url,'_blank'), 800);
+    } else {
+      // Uzum/Visa — admin tasdiqlaguncha kutish
+      toast({uz:'✓ So\'rov yuborildi! Admin tasdiqlaydi.',ru:'✓ Заявка отправлена! Ожидайте подтверждения.',en:'✓ Request sent! Awaiting admin confirmation.'}[TBH.lang]);
+    }
+    await loadPayments();
+  } catch(e){errEl.textContent=e.message;errEl.style.display='block';}
+  finally{btnLoad(btn,false);}
+}
+
+// ── Plan ─────────────────────────────────────────────────────
+function renderPlan() {
+  if(!CU) return;
+  const p = plans.find(x=>x.name===CU.plan) || plans[0];
+  document.getElementById('cpNm').textContent   = (CU.plan||'Free') + ' Plan';
+  document.getElementById('cpRam').textContent  = p.ram;
+  document.getElementById('cpDisk').textContent = p.disk;
+  document.getElementById('cpBots').textContent = p.bots;
+}
+
+// ── Referral ─────────────────────────────────────────────────
+function renderReferral() {
+  if(!CU) return;
+  document.getElementById('refLink').value = `https://tbhplatform.uz/ref/${CU.referral_code||''}`;
+}
+function copyRef() {
+  document.getElementById('refLink').select();
+  document.execCommand('copy');
+  toast({uz:'✓ Havola nusxalandi!',ru:'✓ Ссылка скопирована!',en:'✓ Link copied!'}[TBH.lang]);
+}
+
+// ── Settings ─────────────────────────────────────────────────
+function renderSettings() {
+  if(!CU) return;
+  document.getElementById('stUn').value = CU.username||'';
+  document.getElementById('stEm').value = CU.email||'';
+  document.getElementById('stTg').value = CU.telegram||'';
+  document.getElementById('stLg').value = TBH.lang;
+}
+
+async function saveProfile() {
+  const un = document.getElementById('stUn').value.trim();
+  const tg = document.getElementById('stTg').value.trim();
+  const lg = document.getElementById('stLg').value;
+  const err=document.getElementById('profErr');err.style.display='none';
+  if(!un){err.textContent={uz:"Username bo'sh bo'lishi mumkin emas",ru:"Username не может быть пустым",en:"Username cannot be empty"}[TBH.lang];err.style.display='block';return;}
+  try {
+    const res = await PUT('/users/me', {username:un,telegram:tg,lang:lg});
+    CU = res.user;
+    setUser(CU);
+    renderSidebar();
+    saveLang(lg);
+    applyLang();
+    toast({uz:'✓ Saqlandi!',ru:'✓ Сохранено!',en:'✓ Saved!'}[TBH.lang]);
+  } catch(e){err.textContent=e.message;err.style.display='block';}
+}
+
+async function changePass() {
+  const op=document.getElementById('stOp').value;
+  const np=document.getElementById('stNp').value;
+  const err=document.getElementById('passErr');err.style.display='none';
+  const msgs={uz:{empty:"Ikkala maydonni to'ldiring",short:"Kamida 6 ta belgi"},ru:{empty:"Заполните оба поля",short:"Минимум 6 символов"},en:{empty:"Fill both fields",short:"Min 6 characters"}};
+  const m=msgs[TBH.lang];
+  if(!op||!np){err.textContent=m.empty;err.style.display='block';return;}
+  if(np.length<6){err.textContent=m.short;err.style.display='block';return;}
+  try {
+    await POST('/users/change-password',{old_password:op,new_password:np});
+    document.getElementById('stOp').value='';document.getElementById('stNp').value='';
+    toast({uz:'✓ Parol o\'zgartirildi!',ru:'✓ Пароль изменён!',en:'✓ Password changed!'}[TBH.lang]);
+  } catch(e){err.textContent=e.message;err.style.display='block';}
+}
+
+// ── Charts ───────────────────────────────────────────────────
+function initActChart() {
+  const labels = {uz:['Du','Se','Ch','Pa','Ju','Sh','Ya'],ru:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],en:['Mon','Tue','Wed','Thu','Fri','Sat','Sun']}[TBH.lang];
+  const opts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6868a8',font:{size:10}},grid:{color:'rgba(30,30,63,.4)'}},y:{ticks:{color:'#6868a8',font:{size:10}},grid:{color:'rgba(30,30,63,.4)'},beginAtZero:true}}};
+  actChart = new Chart(document.getElementById('actChart'),{type:'line',data:{labels,datasets:[{data:[0,0,0,0,0,0,0],borderColor:'#4f6ef7',backgroundColor:'rgba(79,110,247,.07)',tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#4f6ef7'}]},options:opts});
+}
+function initPlanChart() {
+  const opts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6868a8',font:{size:10}}}},scales:{x:{ticks:{color:'#6868a8',font:{size:10}},grid:{color:'rgba(30,30,63,.4)'}},y:{ticks:{color:'#6868a8',font:{size:10}},grid:{color:'rgba(30,30,63,.4)'},max:100}}};
+  planChart = new Chart(document.getElementById('planChart'),{type:'line',data:{labels:['1','5','10','15','20','25','30'],datasets:[{label:'CPU %',data:[12,14,11,16,14,13,14],borderColor:'#4f6ef7',tension:.4,fill:false,pointRadius:2},{label:'RAM %',data:[20,22,21,24,22,22,22],borderColor:'#00e5a0',tension:.4,fill:false,pointRadius:2}]},options:opts});
+}
+
+init();
+</script>
+</body>
+</html>
